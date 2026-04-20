@@ -1,67 +1,98 @@
 import { useState, useEffect } from 'react'
-import './index.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { SignedIn, SignedOut, useAsgardeo } from '@asgardeo/react'
+import api, { setAuthToken } from './api'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import Home from './pages/Home'
+import Wines from './pages/Wines'
+import Cart from './pages/Cart'
+import Orders from './pages/Orders'
+import Checkout from './pages/Checkout'
+import CompleteProfile from './pages/CompleteProfile'
+import AdminWines from './pages/AdminWines'
+import AdminCustomers from './pages/AdminCustomers'
+import AdminOrders from './pages/AdminOrders'
+import './App.css'
 
-function App() {
-  const [loaded, setLoaded] = useState(false)
+function AppContent({ userRole, setUserRole }) {
+  const { getAccessToken } = useAsgardeo()
+  const [profileStatus, setProfileStatus] = useState('loading')
 
   useEffect(() => {
-    requestAnimationFrame(() => setLoaded(true))
+    const checkProfile = async () => {
+      try {
+        const token = await getAccessToken()
+        setAuthToken(token)
+        const response = await api.get('/api/users/me')
+        setProfileStatus('complete')
+        setUserRole(response.data.role || 'customer')
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          setProfileStatus('incomplete')
+        } else {
+          console.error('Profile check failed:', err)
+          setProfileStatus('error')
+        }
+      }
+    }
+
+    checkProfile()
   }, [])
 
-  return (
-    <div className={`splash ${loaded ? 'loaded' : ''}`}>
-      <div className="grain" />
-      <div className="vignette" />
+  if (profileStatus === 'loading') {
+    return <main><p>Loading...</p></main>
+  }
 
-      <nav className="top-bar">
-        <span className="nav-item">Est. 2026</span>
-        <span className="nav-item">Coming Soon</span>
-      </nav>
-
-      <main className="hero">
-        <div className="logo-placeholder">
-          <div className="logo-ring">
-            <span>T&P</span>
-          </div>
-        </div>
-
-        <h1 className="title">
-          <span className="title-line">Tam <em>&</em> Pham's</span>
-          <span className="title-line title-large">Winery</span>
-        </h1>
-
-        <div className="divider">
-          <span className="divider-diamond" />
-        </div>
-
-        <p className="tagline">
-          Premium selection of Texas Hill Country Wines available soon for online orders <br />
-          Doors open on April 27th. 
-        </p>
-
-        <form
-          className="notify-form"
-          onSubmit={(e) => {
-            e.preventDefault()
-            alert('Thank you! We\'ll be in touch.')
-          }}
-        >
-          <input
-            type="email"
-            placeholder="Your email for updates"
-            required
-            className="email-input"
-          />
-          <button type="submit" className="notify-btn">Notify Me</button>
-        </form>
+  if (profileStatus === 'incomplete') {
+    return (
+      <main>
+        <Routes>
+          <Route path="/complete-profile" element={<CompleteProfile onComplete={() => setProfileStatus('complete')} />} />
+          <Route path="*" element={<Navigate to="/complete-profile" />} />
+        </Routes>
       </main>
+    )
+  }
 
-      <footer className="bottom-bar">
-        <span>Tam & Pham's Winery</span>
-        <span className="footer-dot">·</span>
-        <span>Fine wines, arriving soon</span>
-      </footer>
-    </div>
+  return (
+    <main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/wines" element={<Wines />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/checkout" element={<Checkout />} />
+        {userRole === 'admin' && (
+          <>
+            <Route path="/admin/wines" element={<AdminWines />} />
+            <Route path="/admin/customers" element={<AdminCustomers />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+          </>
+        )}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </main>
+  )
+}
+
+function App() {
+  const [userRole, setUserRole] = useState('customer')
+
+  return (
+    <BrowserRouter>
+      <Header userRole={userRole} />
+      <SignedOut>
+        <main className="welcome-section">
+          <h2>Welcome to Tam & Pham's Winery</h2>
+          <p>Please sign in to browse our wines.</p>
+        </main>
+      </SignedOut>
+      <SignedIn>
+        <AppContent userRole={userRole} setUserRole={setUserRole} />
+      </SignedIn>
+      <Footer />
+    </BrowserRouter>
   )
 }
 
