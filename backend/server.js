@@ -218,6 +218,11 @@ const adminAuth = [verifyToken, attachRole(User), requireAdmin];
 
 // ---- WINE ROUTES ----
 
+// GET basic route 
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
+
 // GET all wines
 app.get('/api/wines', async (req, res) => {
   try {
