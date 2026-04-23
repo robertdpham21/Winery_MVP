@@ -466,11 +466,25 @@ app.get('/api/orders/:orderID', adminAuth, async (req, res) => {
   }
 });
 
-// GET orders for a specific user
-app.get('/api/users/:userID/orders', async (req, res) => {
+// GET orders for a specific user (self only)
+app.get('/api/users/:userID/orders', verifyToken, async (req, res) => {
   try {
+    // Resolve authenticated Asgardeo subject to local user record.
+    const authUser = await User.findOne({ where: { asgardeo_sub: req.userId } });
+    if (!authUser) return res.status(404).json({ error: 'User not found' });
+
+    const requestedUserId = Number.parseInt(req.params.userID, 10);
+    if (Number.isNaN(requestedUserId)) {
+      return res.status(400).json({ error: 'Invalid userID' });
+    }
+
+    // Row-level authorization: customers can only access their own orders and admin can access all orders.
+    if (authUser.userID !== requestedUserId && authUser.role !== 'admin') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    
     const orders = await Order.findAll({
-      where: { userID: req.params.userID },
+      where: { userID: requestedUserId },
       include: [
         { model: OrderItem, include: [{ model: Wine, attributes: ['name', 'price'] }] },
       ],
