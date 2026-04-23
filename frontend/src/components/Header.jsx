@@ -7,15 +7,15 @@ const Header = ({ userRole }) => {
       <h1>Tam & Pham's Winery</h1>
       <nav>
         <SignedIn>
-          <Link to="/">Home</Link>
-          <Link to="/wines">Wines</Link>
-          <Link to="/cart">Cart</Link>
+          <Link to="/">🏠 Home</Link>
+          <Link to="/wines">🍷 Wines</Link>
+          <Link to="/cart">🛒 Cart</Link>
           <Link to="/orders">Orders</Link>
           {userRole === 'admin' && (
             <>
-              <Link to="/admin/wines">Admin Wines</Link>
-              <Link to="/admin/customers">Admin Customers</Link>
-              <Link to="/admin/orders">Admin Orders</Link>
+              <Link to="/admin/wines">Manage Wines</Link>
+              <Link to="/admin/customers">Manage Customers</Link>
+              <Link to="/admin/orders">Manage Orders</Link>
             </>
           )}
           <SignOutButton />

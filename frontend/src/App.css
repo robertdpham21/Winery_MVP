@@ -1,0 +1,166 @@
+.home-page {
+	display: grid;
+	gap: 2rem;
+}
+
+.home-hero {
+	padding: 2rem;
+	border-radius: 18px;
+	background:
+		linear-gradient(140deg, rgba(26, 10, 10, 0.92), rgba(107, 26, 26, 0.88)),
+		url('https://images.unsplash.com/photo-1506377295352-e31527a34b39?auto=format&fit=crop&w=1800&q=80') center/cover;
+	color: var(--champagne);
+	box-shadow: 0 14px 36px rgba(26, 10, 10, 0.22);
+}
+
+.home-kicker {
+	text-transform: uppercase;
+	letter-spacing: 0.16em;
+	font-size: 0.72rem;
+	color: #f2d487;
+	margin-bottom: 0.6rem;
+}
+
+.home-hero h2 {
+	font-size: clamp(2rem, 4vw, 3rem);
+	line-height: 1.15;
+	margin-bottom: 0.9rem;
+}
+
+.home-hero p {
+	max-width: 62ch;
+	line-height: 1.65;
+	margin-bottom: 1.1rem;
+}
+
+.home-cta {
+	display: inline-flex;
+	align-items: center;
+}
+
+.home-gallery {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 1.2rem;
+}
+
+.home-card {
+	background: white;
+	border-radius: 14px;
+	overflow: hidden;
+	box-shadow: 0 8px 24px rgba(26, 10, 10, 0.1);
+	border: 1px solid #eadfce;
+}
+
+.home-card img {
+	width: 100%;
+	height: 210px;
+	object-fit: cover;
+	display: block;
+}
+
+.home-card-content {
+	padding: 1rem 1rem 1.1rem;
+}
+
+.home-card-content h3 {
+	color: var(--deep-bordeaux);
+	margin-bottom: 0.35rem;
+}
+
+.home-card-content p {
+	color: var(--oak-barrel);
+	line-height: 1.55;
+}
+
+.wines-page {
+	display: grid;
+	gap: 1.5rem;
+}
+
+.wines-heading p {
+	margin-top: 0.35rem;
+	color: var(--oak-barrel);
+}
+
+.wine-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 1.2rem;
+}
+
+.wine-card {
+	background: white;
+	border-radius: 14px;
+	overflow: hidden;
+	border: 1px solid #eadfce;
+	box-shadow: 0 8px 22px rgba(26, 10, 10, 0.08);
+	display: flex;
+	flex-direction: column;
+}
+
+.wine-card-image {
+	width: 100%;
+	height: 190px;
+	object-fit: cover;
+	display: block;
+}
+
+.wine-card-body {
+	padding: 0.95rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+	height: 100%;
+}
+
+.wine-card-body h3 {
+	color: var(--deep-bordeaux);
+}
+
+.wine-meta {
+	color: #7d5f50;
+	text-transform: capitalize;
+	font-size: 0.88rem;
+}
+
+.wine-description {
+	color: #4d3b2f;
+	font-size: 0.92rem;
+	line-height: 1.5;
+	flex: 1;
+}
+
+.wine-card-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: 0.6rem;
+}
+
+.wine-price {
+	font-weight: 700;
+	color: var(--deep-bordeaux);
+}
+
+.wine-stock {
+	color: #6d5b50;
+	font-size: 0.85rem;
+}
+
+.wine-card button:disabled {
+	background-color: #d0c4b6;
+	color: #5a4c43;
+	cursor: not-allowed;
+	transform: none;
+}
+
+@media (max-width: 900px) {
+	.home-gallery {
+		grid-template-columns: 1fr;
+	}
+
+	.home-hero {
+		padding: 1.5rem;
+	}
+}

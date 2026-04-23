@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import api from '../api'
 import { addToCart, getCart } from '../cart'
 
+const FALLBACK_WINE_IMAGE =
+  'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=900&q=80'
+
 const Body = () => {
   const [wines, setWines] = useState([])
   const [message, setMessage] = useState('')
@@ -34,37 +37,46 @@ const Body = () => {
   }
 
   return (
-    <div>
-      <h2>Our Wines</h2>
-      {message && <p>{message}</p>}
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Year</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Description</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {wines.map((wine) => (
-            <tr key={wine.wineID}>
-              <td>{wine.name}</td>
-              <td>{wine.wine_type}</td>
-              <td>{wine.vintage_year}</td>
-              <td>${wine.price}</td>
-              <td>{wine.stock_quantity}</td>
-              <td>{wine.description}</td>
-              <td>
-                <button onClick={() => handleAddToCart(wine)}>Add to Cart</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="wines-page">
+      <div className="wines-heading">
+        <h2>Our Wines</h2>
+        <p>Handpicked bottles ready to be delivered to your table.</p>
+      </div>
+
+      {message && <p className="message-success">{message}</p>}
+
+      <div className="wine-grid">
+        {wines.map((wine) => (
+          <article key={wine.wineID} className="wine-card">
+            <img
+              className="wine-card-image"
+              src={wine.image_url || FALLBACK_WINE_IMAGE}
+              alt={`${wine.name} bottle`}
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = FALLBACK_WINE_IMAGE
+              }}
+            />
+
+            <div className="wine-card-body">
+              <h3>{wine.name}</h3>
+              <p className="wine-meta">
+                {wine.wine_type} {wine.vintage_year ? `• ${wine.vintage_year}` : ''}
+              </p>
+              <p className="wine-description">{wine.description || 'A curated bottle from our cellar.'}</p>
+
+              <div className="wine-card-footer">
+                <p className="wine-price">${wine.price}</p>
+                <p className="wine-stock">In stock: {wine.stock_quantity}</p>
+              </div>
+
+              <button onClick={() => handleAddToCart(wine)} disabled={wine.stock_quantity <= 0}>
+                {wine.stock_quantity <= 0 ? 'Out of Stock' : 'Add to Cart'}
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   )
 }

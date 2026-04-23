@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { SignedIn, SignedOut, useAsgardeo } from '@asgardeo/react'
 import api, { setAuthToken } from './api'
 import Header from './components/Header'
