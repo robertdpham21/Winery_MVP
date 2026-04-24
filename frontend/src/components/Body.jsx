@@ -9,6 +9,7 @@ const FALLBACK_WINE_IMAGE =
 const Body = () => {
   const [wines, setWines] = useState([])
   const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     const fetchWines = async () => {
@@ -16,8 +17,9 @@ const Body = () => {
         const response = await api.get('/api/wines')
         setWines(response.data)
       } catch (err) {
-        console.error('Failed to fetch wines:', err)
-      }
+  console.error('Failed to fetch wines:', err)
+  setError('Failed to load wines. Please try again later.')
+}
     }
     fetchWines()
   }, [])
@@ -44,7 +46,7 @@ const Body = () => {
         <p>Handpicked bottles ready to be delivered to your table.</p>
       </div>
 
-      {message && <p className="message-success">{message}</p>}
+      {error && <p className="message-error">{error}</p>}
 
       <div className="wine-grid">
         {wines.map((wine) => (

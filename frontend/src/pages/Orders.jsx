@@ -5,6 +5,7 @@ import { formatCurrency } from '../utils/formatCurrency'
 const Orders = () => {
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -13,6 +14,7 @@ const Orders = () => {
         setOrders(response.data)
       } catch (err) {
         console.error('Failed to fetch orders:', err)
+        setError('Failed to load orders. Please try again later.')
       }
       setLoading(false)
     }
@@ -20,6 +22,15 @@ const Orders = () => {
   }, [])
 
   if (loading) return <p>Loading orders...</p>
+
+  if (error) {
+    return (
+      <div>
+        <h2>Your Orders</h2>
+        <p className="message-error">{error}</p>
+      </div>
+    )
+  }
 
   if (orders.length === 0) {
     return (

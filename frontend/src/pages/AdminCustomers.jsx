@@ -4,14 +4,16 @@ import api from '../api'
 const AdminCustomers = () => {
   const [users, setUsers] = useState([])
   const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
 
   const fetchUsers = async () => {
     try {
       const response = await api.get('/api/users')
       setUsers(response.data)
     } catch (err) {
-      console.error(err)
-    }
+  console.error(err)
+  setError('Failed to load customers. Please try again later.')
+}
   }
 
   useEffect(() => { fetchUsers() }, [])
@@ -19,6 +21,7 @@ const AdminCustomers = () => {
   return (
     <div>
       <h2>View Customers</h2>
+      {error && <p className="message-error">{error}</p>}
       {message && <p className="message-success">{message}</p>}
 
       <table>
