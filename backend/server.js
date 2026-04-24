@@ -216,6 +216,35 @@ OrderItem.belongsTo(Wine, { foreignKey: 'wineID' });
 // Admin middleware chain
 const adminAuth = [verifyToken, attachRole(User), requireAdmin];
 
+const validateWinePayload = (payload, { partial = false } = {}) => {
+  const currentYear = new Date().getFullYear();
+
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, 'vintage_year')) {
+    if (payload.vintage_year !== null && payload.vintage_year !== undefined && payload.vintage_year !== '') {
+      const parsedVintageYear = Number(payload.vintage_year);
+      if (!Number.isInteger(parsedVintageYear) || parsedVintageYear >= currentYear) {
+        return `Vintage year must be a valid year before ${currentYear}`;
+      }
+    }
+  }
+
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, 'price')) {
+    const parsedPrice = Number(payload.price);
+    if (!Number.isFinite(parsedPrice) || parsedPrice <= 1) {
+      return 'Wine price must be greater than $1';
+    }
+  }
+
+  if (!partial || Object.prototype.hasOwnProperty.call(payload, 'stock_quantity')) {
+    const parsedStock = Number(payload.stock_quantity);
+    if (!Number.isInteger(parsedStock) || parsedStock < 0) {
+      return 'Stock quantity must be a whole number greater than or equal to 0';
+    }
+  }
+
+  return null;
+};
+
 // ---- WINE ROUTES ----
 
 // GET basic route 
@@ -250,13 +279,16 @@ app.get('/api/wines/:wineID', async (req, res) => {
 app.post('/api/wines', adminAuth, async (req, res) => {
   try {
     const { name, wine_type, description, vintage_year, price, stock_quantity, image_url } = req.body;
+    const validationError = validateWinePayload(req.body);
+    if (validationError) return res.status(400).json({ error: validationError });
+
     const wine = await Wine.create({
       name,
       wine_type,
       description,
-      vintage_year,
-      price,
-      stock_quantity,
+      vintage_year: vintage_year === '' || vintage_year === null || vintage_year === undefined ? null : Number(vintage_year),
+      price: Number(price),
+      stock_quantity: Number(stock_quantity),
       image_url,
       is_active: true,
     });
@@ -272,7 +304,24 @@ app.put('/api/wines/:wineID', adminAuth, async (req, res) => {
   try {
     const wine = await Wine.findByPk(req.params.wineID);
     if (!wine) return res.status(404).json({ error: 'Wine not found' });
-    await wine.update(req.body);
+
+    const validationError = validateWinePayload(req.body, { partial: true });
+    if (validationError) return res.status(400).json({ error: validationError });
+
+    const updates = { ...req.body };
+    if (Object.prototype.hasOwnProperty.call(updates, 'price')) {
+      updates.price = Number(updates.price);
+    }
+    if (Object.prototype.hasOwnProperty.call(updates, 'stock_quantity')) {
+      updates.stock_quantity = Number(updates.stock_quantity);
+    }
+    if (Object.prototype.hasOwnProperty.call(updates, 'vintage_year')) {
+      updates.vintage_year = updates.vintage_year === '' || updates.vintage_year === null || updates.vintage_year === undefined
+        ? null
+        : Number(updates.vintage_year);
+    }
+
+    await wine.update(updates);
     res.json(wine);
   } catch (err) {
     console.error(err);
