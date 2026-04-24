@@ -5,13 +5,20 @@ import { formatCurrency } from '../utils/formatCurrency'
 
 const Cart = () => {
   const [cart, setCart] = useState(getCart())
+  const [message, setMessage] = useState('')
+
 
   const handleQuantityChange = (wineID, newQty, maxStock) => {
-    if (newQty < 1) return
-    if (newQty > maxStock) return
-    const updated = updateQuantity(wineID, newQty)
-    setCart(updated)
+  if (newQty < 1) return
+  if (newQty > maxStock) {
+    setMessage(`Cannot exceed ${maxStock} — limited stock available.`)
+    setTimeout(() => setMessage(''), 2000)
+    return
   }
+  setMessage('')
+  const updated = updateQuantity(wineID, newQty)
+  setCart(updated)
+}
 
   const handleRemove = (wineID) => {
     const updated = removeFromCart(wineID)
@@ -30,6 +37,7 @@ const Cart = () => {
   return (
     <div>
       <h2>Your Cart</h2>
+      {message && <p className="message-error">{message}</p>}
       <table>
         <thead>
           <tr>

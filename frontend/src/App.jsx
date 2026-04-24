@@ -13,6 +13,8 @@ import CompleteProfile from './pages/CompleteProfile'
 import AdminWines from './pages/AdminWines'
 import AdminCustomers from './pages/AdminCustomers'
 import AdminOrders from './pages/AdminOrders'
+import Profile from './pages/Profile'
+import NotFound from './pages/NotFound'
 import './App.css'
 
 function AppContent({ userRole, setUserRole }) {
@@ -62,7 +64,9 @@ function AppContent({ userRole, setUserRole }) {
         <Route path="/wines" element={<Wines />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/checkout" element={<Checkout />} />
+        
         {userRole === 'admin' && (
           <>
             <Route path="/admin/wines" element={<AdminWines />} />
@@ -70,7 +74,7 @@ function AppContent({ userRole, setUserRole }) {
             <Route path="/admin/orders" element={<AdminOrders />} />
           </>
         )}
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </main>
   )

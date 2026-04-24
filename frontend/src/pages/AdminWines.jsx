@@ -12,20 +12,16 @@ const AdminWines = () => {
   const [editing, setEditing] = useState(null)
   const [message, setMessage] = useState('')
 
-  const fetchWines = async () => {
-    try {
-      const response = await api.get('/api/wines')
-      setWines(response.data)
-    } catch (err) {
-      console.error(err)
-    }
+const fetchWines = async () => {
+  try {
+    const response = await api.get('/api/wines?all=true')
+    setWines(response.data)
+  } catch (err) {
+    console.error(err)
   }
+}
 
-  useEffect(() => {
-    api.get('/api/wines')
-      .then((response) => setWines(response.data))
-      .catch((err) => console.error(err))
-  }, [])
+ useEffect(() => { fetchWines() }, [])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })

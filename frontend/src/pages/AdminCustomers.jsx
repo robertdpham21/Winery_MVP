@@ -16,21 +16,9 @@ const AdminCustomers = () => {
 
   useEffect(() => { fetchUsers() }, [])
 
-  const handleDelete = async (userID) => {
-    if (!window.confirm('Are you sure you want to deactivate this user?')) return
-    try {
-      await api.delete(`/api/users/${userID}`)
-      setMessage('User deactivated')
-      fetchUsers()
-      setTimeout(() => setMessage(''), 2000)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   return (
     <div>
-      <h2>Manage Customers</h2>
+      <h2>View Customers</h2>
       {message && <p className="message-success">{message}</p>}
 
       <table>
@@ -42,25 +30,17 @@ const AdminCustomers = () => {
             <th>Phone</th>
             <th>Address</th>
             <th>Age Verified</th>
-            <th>Active</th>
-            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.userID} style={{ opacity: user.is_active ? 1 : 0.5 }}>
+            <tr key={user.userID}>
               <td>{user.userID}</td>
               <td>{user.FirstName} {user.LastName}</td>
               <td>{user.Email}</td>
               <td>{user.phone}</td>
               <td>{user.address}</td>
               <td>{user.is_age_verified ? 'Yes' : 'No'}</td>
-              <td>{user.is_active ? 'Yes' : 'No'}</td>
-              <td>
-                {user.is_active && (
-                  <button className="btn-small" onClick={() => handleDelete(user.userID)}>Deactivate</button>
-                )}
-              </td>
             </tr>
           ))}
         </tbody>

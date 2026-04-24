@@ -255,7 +255,8 @@ app.get('/', (req, res) => {
 // GET all wines
 app.get('/api/wines', async (req, res) => {
   try {
-    const wines = await Wine.findAll();
+    const whereClause = req.query.all === 'true' ? {} : { is_active: true };
+    const wines = await Wine.findAll({ where: whereClause });
     res.json(wines);
   } catch (err) {
     console.error(err);
@@ -348,7 +349,9 @@ app.put('/api/users/me', verifyToken, async (req, res) => {
   try {
     const user = await User.findOne({ where: { asgardeo_sub: req.userId } });
     if (!user) return res.status(404).json({ error: 'Profile not found' });
-    await user.update(req.body);
+
+    const { FirstName, LastName, Email, phone, address } = req.body;
+    await user.update({ FirstName, LastName, Email, phone, address });
     res.json(user);
   } catch (err) {
     console.error(err);
@@ -436,16 +439,17 @@ app.post('/api/users/complete-profile', verifyToken, async (req, res) => {
     }
 
     const user = await User.create({
-      asgardeo_sub: req.userId,
-      FirstName: FirstName || '',
-      LastName: LastName || '',
-      Email: Email || '',
-      date_of_birth,
-      phone,
-      address,
-      is_age_verified: true,
-      is_active: true,
-    });
+  asgardeo_sub: req.userId,
+  FirstName: FirstName || '',
+  LastName: LastName || '',
+  Email: Email || '',
+  date_of_birth,
+  phone,
+  address,
+  is_age_verified: true,
+  is_active: true,
+  role: 'customer',
+});
 
     res.status(201).json(user);
   } catch (err) {
@@ -464,19 +468,6 @@ app.put('/api/users/:userID', adminAuth, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to update user' });
-  }
-});
-
-// DELETE soft-delete user (set is_active = false)
-app.delete('/api/users/:userID', adminAuth, async (req, res) => {
-  try {
-    const user = await User.findByPk(req.params.userID);
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    await user.update({ is_active: false });
-    res.json({ message: 'User deactivated' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to delete user' });
   }
 });
 

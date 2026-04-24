@@ -10,11 +10,12 @@ const Header = ({ userRole }) => {
           <Link to="/">🏠 Home</Link>
           <Link to="/wines">🍷 Wines</Link>
           <Link to="/cart">🛒 Cart</Link>
-          <Link to="/orders">Orders</Link>
+          <Link to="/orders">📦 Orders</Link>
+          <Link to="/profile">👤 Profile</Link>
           {userRole === 'admin' && (
             <>
               <Link to="/admin/wines">Manage Wines</Link>
-              <Link to="/admin/customers">Manage Customers</Link>
+              <Link to="/admin/customers">View Customers</Link>
               <Link to="/admin/orders">Manage Orders</Link>
             </>
           )}
