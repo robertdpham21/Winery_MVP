@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import api from '../api'
+import { formatCurrency } from '../utils/formatCurrency'
 
 const AdminWines = () => {
+  const currentYear = new Date().getFullYear()
+
   const [wines, setWines] = useState([])
   const [form, setForm] = useState({
     name: '', wine_type: 'red', description: '', vintage_year: '', price: '', stock_quantity: '', image_url: ''
@@ -18,7 +21,11 @@ const AdminWines = () => {
     }
   }
 
-  useEffect(() => { fetchWines() }, [])
+  useEffect(() => {
+    api.get('/api/wines')
+      .then((response) => setWines(response.data))
+      .catch((err) => console.error(err))
+  }, [])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -26,6 +33,27 @@ const AdminWines = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    const parsedPrice = Number(form.price)
+    if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
+      setMessage('Price must be greater than 0')
+      return
+    }
+
+    const parsedStock = Number(form.stock_quantity)
+    if (!Number.isInteger(parsedStock) || parsedStock < 0) {
+      setMessage('Stock must be a whole number 0 or greater')
+      return
+    }
+
+    if (form.vintage_year !== '') {
+      const parsedVintageYear = Number(form.vintage_year)
+      if (!Number.isInteger(parsedVintageYear) || parsedVintageYear >= currentYear) {
+        setMessage(`Vintage year must be before ${currentYear}`)
+        return
+      }
+    }
+
     try {
       if (editing) {
         await api.put(`/api/wines/${editing}`, form)
@@ -39,7 +67,7 @@ const AdminWines = () => {
       fetchWines()
       setTimeout(() => setMessage(''), 2000)
     } catch (err) {
-      setMessage('Failed to save wine')
+      setMessage(err?.response?.data?.error || 'Failed to save wine')
     }
   }
 
@@ -91,15 +119,15 @@ const AdminWines = () => {
         </div>
         <div>
           <label>Vintage Year:</label>
-          <input type="number" name="vintage_year" value={form.vintage_year} onChange={handleChange} />
+          <input type="number" name="vintage_year" value={form.vintage_year} onChange={handleChange} min="1000" max={currentYear - 1} />
         </div>
         <div>
           <label>Price:</label>
-          <input type="number" step="0.01" name="price" value={form.price} onChange={handleChange} required />
+          <input type="number" step="0.01" min="1.00" name="price" value={form.price} onChange={handleChange} required />
         </div>
         <div>
           <label>Stock:</label>
-          <input type="number" name="stock_quantity" value={form.stock_quantity} onChange={handleChange} required />
+          <input type="number" min="0" step="1" name="stock_quantity" value={form.stock_quantity} onChange={handleChange} required />
         </div>
         <div>
           <label>Image URL:</label>
@@ -127,7 +155,7 @@ const AdminWines = () => {
               <td>{wine.name}</td>
               <td>{wine.wine_type}</td>
               <td>{wine.vintage_year}</td>
-              <td>${wine.price}</td>
+              <td>{formatCurrency(wine.price)}</td>
               <td>{wine.stock_quantity}</td>
               <td>{wine.is_active ? 'Yes' : 'No'}</td>
               <td>

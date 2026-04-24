@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { getCart, updateQuantity, removeFromCart, getCartTotal } from '../cart'
 import { Link } from 'react-router-dom'
+import { formatCurrency } from '../utils/formatCurrency'
 
 const Cart = () => {
   const [cart, setCart] = useState(getCart())
@@ -43,7 +44,7 @@ const Cart = () => {
           {cart.map((item) => (
             <tr key={item.wineID}>
               <td>{item.name}</td>
-              <td>${item.price.toFixed(2)}</td>
+              <td>{formatCurrency(item.price)}</td>
               <td>
                 <div className="cart-quantity">
                     <button onClick={() => handleQuantityChange(item.wineID, item.quantity - 1, item.stock_quantity)}>-</button>
@@ -51,7 +52,7 @@ const Cart = () => {
                     <button onClick={() => handleQuantityChange(item.wineID, item.quantity + 1, item.stock_quantity)}>+</button>
                 </div>
               </td>
-              <td>${(item.price * item.quantity).toFixed(2)}</td>
+              <td>{formatCurrency(item.price * item.quantity)}</td>
               <td>
                 <button onClick={() => handleRemove(item.wineID)}>Remove</button>
               </td>
@@ -59,7 +60,7 @@ const Cart = () => {
           ))}
         </tbody>
       </table>
-      <h3 className="cart-total">Total: ${getCartTotal().toFixed(2)}</h3>
+      <h3 className="cart-total">Total: {formatCurrency(getCartTotal())}</h3>
       <Link to="/checkout"><button>Proceed to Checkout</button></Link>
     </div>
   )

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../api'
 import { addToCart, getCart } from '../cart'
+import { formatCurrency } from '../utils/formatCurrency'
 
 const FALLBACK_WINE_IMAGE =
   'https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?auto=format&fit=crop&w=900&q=80'
@@ -66,7 +67,7 @@ const Body = () => {
               <p className="wine-description">{wine.description || 'A curated bottle from our cellar.'}</p>
 
               <div className="wine-card-footer">
-                <p className="wine-price">${wine.price}</p>
+                <p className="wine-price">{formatCurrency(wine.price)}</p>
                 <p className="wine-stock">In stock: {wine.stock_quantity}</p>
               </div>
 

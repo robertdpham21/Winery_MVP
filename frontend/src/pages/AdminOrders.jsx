@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api'
+import { formatCurrency } from '../utils/formatCurrency'
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([])
@@ -54,14 +55,14 @@ const AdminOrders = () => {
                 <tr key={item.linkingID}>
                   <td>{item.wine?.name}</td>
                   <td>{item.quantity}</td>
-                  <td>${parseFloat(item.unit_price).toFixed(2)}</td>
-                  <td>${(item.quantity * parseFloat(item.unit_price)).toFixed(2)}</td>
+                  <td>{formatCurrency(item.unit_price)}</td>
+                  <td>{formatCurrency(item.quantity * parseFloat(item.unit_price))}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <h4>Total: ${parseFloat(order.total_amount).toFixed(2)}</h4>
+          <h4>Total: {formatCurrency(order.total_amount)}</h4>
 
           {order.order_status !== 'completed' && order.order_status !== 'cancelled' && (
             <div style={{ marginTop: '0.8rem', display: 'flex', gap: '0.5rem' }}>

@@ -4,6 +4,7 @@ import { loadStripe } from '@stripe/stripe-js'
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import api from '../api'
 import { getCart, clearCart } from '../cart'
+import { formatCurrency } from '../utils/formatCurrency'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
@@ -76,13 +77,13 @@ function CheckoutForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Total: ${total.toFixed(2)}</h3>
+      <h3>Total: {formatCurrency(total)}</h3>
       <div className="stripe-card">
         <CardElement />
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <button type="submit" disabled={!stripe || loading}>
-        {loading ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+        {loading ? 'Processing...' : `Pay ${formatCurrency(total)}`}
       </button>
     </form>
   )
