@@ -216,6 +216,22 @@ OrderItem.belongsTo(Wine, { foreignKey: 'wineID' });
 // Admin middleware chain
 const adminAuth = [verifyToken, attachRole(User), requireAdmin];
 
+const allowedOrderStatuses = new Set(['pending', 'ready_for_pickup', 'picked_up', 'cancelled', 'completed']);
+
+const ensureOrderStatusColumnSupportsPickedUp = async () => {
+  try {
+    await sequelize.query(`
+      ALTER TABLE "${DB_SCHEMA}"."orders"
+      ALTER COLUMN "order_status" TYPE VARCHAR(20)
+      USING "order_status"::VARCHAR(20);
+    `);
+    console.log('Order status column updated successfully');
+  } catch (err) {
+    // Column may already be the correct type or migration may have already run
+    console.log('Order status column already supports all statuses or migration skipped:', err.message);
+  }
+};
+
 const validateWinePayload = (payload, { partial = false } = {}) => {
   const currentYear = new Date().getFullYear();
 
@@ -603,20 +619,28 @@ app.put('/api/orders/:orderID', adminAuth, async (req, res) => {
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
     const { order_status } = req.body;
+    const normalizedOrderStatus = order_status ? String(order_status).trim() : order_status;
+
+    if (normalizedOrderStatus && !allowedOrderStatuses.has(normalizedOrderStatus)) {
+      return res.status(400).json({ error: 'Invalid order status' });
+    }
 
     // If cancelling, restock the items
-    if (order_status === 'cancelled' && order.order_status !== 'cancelled') {
+    if (normalizedOrderStatus === 'cancelled' && order.order_status !== 'cancelled') {
       for (const item of order.order_items) {
         const wine = await Wine.findByPk(item.wineID);
         await wine.update({ stock_quantity: wine.stock_quantity + item.quantity });
       }
     }
 
-    await order.update(req.body);
+    await order.update({ order_status: normalizedOrderStatus });
+    await order.reload({
+      include: [{ model: OrderItem }],
+    });
     res.json(order);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to update order' });
+    res.status(500).json({ error: err?.message || 'Failed to update order' });
   }
 });
 
@@ -704,6 +728,7 @@ app.post('/api/payments/create-intent', verifyToken, async (req, res) => {
 const startServer = async () => {
   try {
     await sequelize.authenticate();
+    await ensureOrderStatusColumnSupportsPickedUp();
     console.log('Database connected...');
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);

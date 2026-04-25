@@ -223,6 +223,75 @@ form input:focus, form select:focus, form textarea:focus {
   margin-top: 0.8rem;
 }
 
+.order-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 1rem 0 1.2rem;
+}
+
+.order-tab {
+  border: 1px solid #d8ccb9;
+  background: #fff;
+  color: var(--oak-barrel);
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.order-tab.is-active {
+  background: var(--deep-bordeaux);
+  color: var(--champagne);
+  border-color: var(--deep-bordeaux);
+}
+
+.order-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.order-status--pending {
+  background: #fff4d6;
+  color: #8a6400;
+}
+
+.order-status--ready {
+  background: #e7f5e8;
+  color: #2e7d32;
+}
+
+.order-status--picked {
+  background: #d6efe0;
+  color: #1f6b3d;
+}
+
+.order-status--cancelled {
+  background: #fde2e2;
+  color: #b3261e;
+}
+
+.order-status--completed {
+  background: #e1f1e6;
+  color: #1f6b3d;
+}
+
+.order-status--default {
+  background: #efefef;
+  color: #5f5f5f;
+}
+
 /* ---- MESSAGES ---- */
 .message-success {
   background-color: #e8f5e9;
