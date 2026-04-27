@@ -397,3 +397,8 @@ header button {
 header button:hover {
   background-color: var(--cabernet);
 }
+
+header, nav {
+  position: relative; /* Required for z-index to work */
+  z-index: 10001 !important; /* One higher than the typical widget max */
+}
