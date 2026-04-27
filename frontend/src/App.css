@@ -66,15 +66,30 @@
 	box-shadow: 0 8px 20px rgba(26, 10, 10, 0.16);
 }
 
-strata-chat {
+#chat-container {
 	position: fixed !important;
 	bottom: 2rem !important;
 	right: 1.5rem !important;
 	z-index: 100 !important;
+	width: 380px !important;
+	max-height: 600px !important;
+	overflow: hidden !important;
+	pointer-events: auto !important;
+}
+
+strata-chat {
+	position: static !important;
+	bottom: auto !important;
+	right: auto !important;
+	z-index: auto !important;
 	top: auto !important;
 	left: auto !important;
-	max-width: 380px !important;
+	max-width: 100% !important;
+	width: 100% !important;
+	max-height: 100% !important;
+	height: 100% !important;
 	pointer-events: auto !important;
+	overflow: hidden !important;
 }
 
 .app-notification {
