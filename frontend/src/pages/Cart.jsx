@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { getCart, updateQuantity, removeFromCart, getCartTotal } from '../cart'
+import { getCart, updateQuantity, removeFromCart, getCartSubtotal, getCartTax, getCartTotal, TAX_RATE } from '../cart'
 import { Link } from 'react-router-dom'
 import { formatCurrency } from '../utils/formatCurrency'
+import { notifyError } from '../utils/notify'
 
 const Cart = () => {
   const [cart, setCart] = useState(getCart())
@@ -11,7 +12,9 @@ const Cart = () => {
   const handleQuantityChange = (wineID, newQty, maxStock) => {
   if (newQty < 1) return
   if (newQty > maxStock) {
-    setMessage(`Cannot exceed ${maxStock} — limited stock available.`)
+    const message = `Cannot exceed ${maxStock} — limited stock available.`
+    setMessage(message)
+    notifyError(message)
     setTimeout(() => setMessage(''), 2000)
     return
   }
@@ -25,11 +28,16 @@ const Cart = () => {
     setCart(updated)
   }
 
+  const subtotal = getCartSubtotal()
+  const tax = getCartTax()
+  const total = getCartTotal()
+
   if (cart.length === 0) {
     return (
       <div>
         <h2>Your Cart</h2>
         <p>Your cart is empty.</p>
+        <Link to="/wines"><button>Shop Wines</button></Link>
       </div>
     )
   }
@@ -68,7 +76,10 @@ const Cart = () => {
           ))}
         </tbody>
       </table>
-      <h3 className="cart-total">Total: {formatCurrency(getCartTotal())}</h3>
+      <h3 className="cart-total">Subtotal: {formatCurrency(subtotal)}</h3>
+      <p>Tax ({(TAX_RATE * 100).toFixed(2)}%): {formatCurrency(tax)}</p>
+      <h3 className="cart-total">Total: {formatCurrency(total)}</h3>
+      <Link to="/wines"><button>Shop Wines</button></Link>
       <Link to="/checkout"><button>Proceed to Checkout</button></Link>
     </div>
   )

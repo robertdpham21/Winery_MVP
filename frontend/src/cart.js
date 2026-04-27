@@ -3,8 +3,21 @@ const getCartKey = () => {
   return token ? `winery_cart_${token}` : 'winery_cart'
 }
 
+export const TAX_RATE = 0.0825
+
 export const setCartUser = (userId) => {
-  localStorage.setItem('cart_user', userId)
+  const nextUserId = userId ? String(userId) : ''
+  const currentUserId = localStorage.getItem('cart_user') || ''
+
+  if (nextUserId) {
+    localStorage.setItem('cart_user', nextUserId)
+  } else {
+    localStorage.removeItem('cart_user')
+  }
+
+  if (currentUserId !== nextUserId) {
+    window.dispatchEvent(new Event('cart-updated'))
+  }
 }
 
 export const getCart = () => {
@@ -59,7 +72,15 @@ export const clearCart = () => {
   window.dispatchEvent(new Event('cart-updated'))
 }
 
-export const getCartTotal = () => {
+export const getCartSubtotal = () => {
   const cart = getCart()
   return cart.reduce((total, item) => total + item.price * item.quantity, 0)
+}
+
+export const getCartTax = () => {
+  return getCartSubtotal() * TAX_RATE
+}
+
+export const getCartTotal = () => {
+  return getCartSubtotal() + getCartTax()
 }

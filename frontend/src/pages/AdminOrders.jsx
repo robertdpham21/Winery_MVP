@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../api'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatOrderStatus } from '../utils/formatOrderStatus'
+import { notifyError, notifySuccess } from '../utils/notify'
 
 const ORDER_TABS = [
   { value: 'all', label: 'All Orders' },
@@ -41,10 +42,14 @@ const AdminOrders = () => {
         await api.put(`/api/orders/${orderID}`, { order_status: newStatus })
         await fetchOrders() 
         setActiveTab(newStatus) // then switch tab — data is ready
-        setMessage(`Order #${orderID} updated to ${formatOrderStatus(newStatus).label}`)
+        const message = `Order #${orderID} updated to ${formatOrderStatus(newStatus).label}`
+        setMessage(message)
+        notifySuccess(message)
         setTimeout(() => setMessage(''), 2000)
       } catch (err) {
-        setError(err?.response?.data?.error || 'Failed to update order status')
+        const message = err?.response?.data?.error || 'Failed to update order status'
+        setError(message)
+        notifyError(message)
         console.error(err)
       } finally {
         setUpdatingOrderId(null)

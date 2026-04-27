@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import api from '../api'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatOrderStatus } from '../utils/formatOrderStatus'
+import { notifyError } from '../utils/notify'
 
 const ORDER_TABS = [
   { value: 'all', label: 'All Orders' },
@@ -24,6 +25,7 @@ const Orders = () => {
       } catch (err) {
         console.error('Failed to fetch orders:', err)
         setError('Failed to load orders. Please try again later.')
+        notifyError('Failed to load orders. Please try again later.')
       }
       setLoading(false)
     }
@@ -82,7 +84,13 @@ const Orders = () => {
           return (
             <div key={order.orderID} className="order-card">
               <h3>Order #{order.orderID}</h3>
-              <p>Date: {new Date(order.ordered_at).toLocaleDateString()}</p>
+              <p>
+                Date: {new Date(order.ordered_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
               <p className="order-status-row">
                 Status:{' '}
                 <span className={`order-status-badge ${status.className}`}>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { SignedIn, SignedOut, SignInButton, SignOutButton } from '@asgardeo/react'
 import { getCart } from '../cart'
 
-const Header = ({ userRole }) => {
+const Header = ({ userRole, userName }) => {
   const [cartCount, setCartCount] = useState(0)
 
   useEffect(() => {
@@ -18,22 +18,23 @@ const Header = ({ userRole }) => {
   }, [])
 
   return (
-    <header>
+    <header className="site-header">
       <h1>Tam & Pham's Winery</h1>
       <nav>
         <SignedIn>
           <Link to="/">🏠 Home</Link>
           <Link to="/wines">🍷 Wines</Link>
           <Link to="/cart">🛒 Cart{cartCount > 0 ? ` (${cartCount})` : ''}</Link>
-          <Link to="/orders">Orders</Link>
-          <Link to="/profile">Profile</Link>
+          <Link to="/orders">📦 Orders</Link>
+          <Link to="/profile">👤Profile</Link>
           {userRole === 'admin' && (
             <>
-              <Link to="/admin/wines">Manage Wines</Link>
-              <Link to="/admin/customers">View Users</Link>
-              <Link to="/admin/orders">Manage Orders</Link>
+              <Link to="/admin/wines">⚙️ Manage Wines</Link>
+              <Link to="/admin/customers">⚙️ View Users</Link>
+              <Link to="/admin/orders">⚙️ Manage Orders</Link>
             </>
           )}
+          {userName && <span className="header-welcome">Welcome, {userName}</span>}
           <SignOutButton />
         </SignedIn>
         <SignedOut>

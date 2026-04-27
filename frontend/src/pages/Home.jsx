@@ -18,7 +18,7 @@ const Home = () => {
       <section className="home-gallery" aria-label="Featured winery scenes">
         <article className="home-card">
           <img
-            src="https://images.unsplash.com/photo-1470158499416-75be9aa0c4db?auto=format&fit=crop&w=1200&q=80"
+            src="https://images.unsplash.com/photo-1637181156153-bedd1098f8c1?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2luZXJ5fGVufDB8fDB8fHww"
             alt="Rows of grapevines in a vineyard"
             loading="lazy"
           />
@@ -30,7 +30,7 @@ const Home = () => {
 
         <article className="home-card">
           <img
-            src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1200&q=80"
+            src="https://images.unsplash.com/photo-1470158499416-75be9aa0c4db?auto=format&fit=crop&w=1200&q=80"
             alt="Wine glasses and bottles on a tasting table"
             loading="lazy"
           />
@@ -42,7 +42,7 @@ const Home = () => {
 
         <article className="home-card">
           <img
-            src="https://images.unsplash.com/photo-1547595628-c61a29f496f0?auto=format&fit=crop&w=1200&q=80"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQA2XwBs_JV38nXZ3H60sUGncXP7UFEWFvy-w&s"
             alt="Modern winery building at golden hour"
             loading="lazy"
           />

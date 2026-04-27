@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api'
+import { notifyError } from '../utils/notify'
 
 const AdminCustomers = () => {
   const [users, setUsers] = useState([])
@@ -13,10 +14,16 @@ const AdminCustomers = () => {
     } catch (err) {
   console.error(err)
   setError('Failed to load customers. Please try again later.')
+  notifyError('Failed to load customers. Please try again later.')
 }
   }
 
   useEffect(() => { fetchUsers() }, [])
+
+  const formatRole = (role) => {
+    if (role === 'admin') return 'Admin'
+    return 'Customer'
+  }
 
   return (
     <div>
@@ -39,7 +46,12 @@ const AdminCustomers = () => {
           {users.map((user) => (
             <tr key={user.userID}>
               <td>{user.userID}</td>
-              <td>{user.FirstName} {user.LastName}</td>
+              <td>
+                {user.FirstName} {user.LastName}{' '}
+                <span className={`role-badge ${user.role === 'admin' ? 'role-badge-admin' : 'role-badge-customer'}`}>
+                  {formatRole(user.role)}
+                </span>
+              </td>
               <td>{user.Email}</td>
               <td>{user.phone}</td>
               <td>{user.address}</td>

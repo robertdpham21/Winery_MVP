@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '@asgardeo/react'
 import api from '../api'
+import { notifyError, notifySuccess } from '../utils/notify'
 
 const CompleteProfile = ({ onComplete }) => {
   const navigate = useNavigate()
@@ -33,16 +34,20 @@ const CompleteProfile = ({ onComplete }) => {
         address: formData.address,
       })
       if (response.status === 201) {
+        notifySuccess('Profile completed successfully!')
         if (onComplete) onComplete()
         navigate('/wines')
       }
     } catch (err) {
       if (err.response && err.response.status === 403) {
         setError('You must be 21 or older to register.')
+        notifyError('You must be 21 or older to register.')
       } else if (err.response && err.response.status === 400) {
         setError('Profile already exists.')
+        notifyError('Profile already exists.')
       } else {
         setError('Something went wrong. Please try again.')
+        notifyError('Something went wrong. Please try again.')
       }
     }
   }

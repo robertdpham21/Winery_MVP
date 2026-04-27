@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import api from '../api'
+import { notifyError, notifySuccess } from '../utils/notify'
 
 const Profile = () => {
   const [profile, setProfile] = useState(null)
@@ -29,6 +30,7 @@ const Profile = () => {
       } catch (err) {
         console.error(err)
         setError('Failed to load profile.')
+        notifyError('Failed to load profile.')
       }
     }
     fetchProfile()
@@ -36,6 +38,11 @@ const Profile = () => {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleEmailClick = () => {
+    setError('You cannot update your email address.')
+    notifyError('You cannot update your email address.')
   }
 
   const handleSubmit = async (e) => {
@@ -48,9 +55,11 @@ const Profile = () => {
       setProfile(response.data)
       setEditing(false)
       setMessage('Profile updated!')
+      notifySuccess('Profile updated!')
       setTimeout(() => setMessage(''), 2000)
     } catch (err) {
       setError('Failed to update profile.')
+      notifyError('Failed to update profile.')
     }
   }
 
@@ -83,7 +92,13 @@ const Profile = () => {
           </div>
           <div>
             <label>Email:</label>
-            <input type="email" value={form.Email} disabled />
+            <input
+              type="email"
+              value={form.Email}
+              readOnly
+              onClick={handleEmailClick}
+              onFocus={handleEmailClick}
+            />
         </div>
           <div>
             <label>Phone:</label>

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { SignedIn, SignedOut, useAsgardeo } from '@asgardeo/react'
 import api, { setAuthToken } from './api'
 import { setCartUser } from './cart'
@@ -19,7 +19,7 @@ import NotFound from './pages/NotFound'
 
 import './App.css'
 
-function AppContent({ userRole, setUserRole }) {
+function AppContent({ userRole, setUserRole, setUserName }) {
   const { getAccessToken } = useAsgardeo()
   const [profileStatus, setProfileStatus] = useState('loading')
 
@@ -31,19 +31,24 @@ function AppContent({ userRole, setUserRole }) {
         const response = await api.get('/api/users/me')
         setProfileStatus('complete')
         setUserRole(response.data.role || 'customer')
+        setUserName(response.data.FirstName || '')
         setCartUser(response.data.userID)
       } catch (err) {
         if (err.response && err.response.status === 404) {
+          setUserName('')
+          setCartUser(null)
           setProfileStatus('incomplete')
         } else {
           console.error('Profile check failed:', err)
+          setUserName('')
+          setCartUser(null)
           setProfileStatus('error')
         }
       }
     }
 
     checkProfile()
-  }, [])
+  }, [getAccessToken, setUserName, setUserRole])
 
   if (profileStatus === 'loading') {
     return <main><p>Loading...</p></main>
@@ -85,10 +90,45 @@ function AppContent({ userRole, setUserRole }) {
 
 function App() {
   const [userRole, setUserRole] = useState('customer')
+  const [userName, setUserName] = useState('')
+  const [notification, setNotification] = useState(null)
+  const notificationTimerRef = useRef(null)
+
+  useEffect(() => {
+    const handleNotification = (event) => {
+      const detail = event.detail || {}
+
+      if (!detail.message) return
+
+      setNotification({ type: detail.type || 'success', message: detail.message })
+
+      if (notificationTimerRef.current) {
+        window.clearTimeout(notificationTimerRef.current)
+      }
+
+      notificationTimerRef.current = window.setTimeout(() => {
+        setNotification(null)
+      }, 3500)
+    }
+
+    window.addEventListener('winery-notification', handleNotification)
+
+    return () => {
+      window.removeEventListener('winery-notification', handleNotification)
+      if (notificationTimerRef.current) {
+        window.clearTimeout(notificationTimerRef.current)
+      }
+    }
+  }, [])
 
   return (
     <BrowserRouter>
-      <Header userRole={userRole} />
+      <Header userRole={userRole} userName={userName} />
+      {notification && (
+        <div className={`app-notification app-notification-${notification.type}`} role="status" aria-live="polite">
+          {notification.message}
+        </div>
+      )}
       <SignedOut>
         <main className="welcome-section">
           <h2>Welcome to Tam & Pham's Winery</h2>
@@ -96,7 +136,7 @@ function App() {
         </main>
       </SignedOut>
       <SignedIn>
-        <AppContent userRole={userRole} setUserRole={setUserRole} />
+        <AppContent userRole={userRole} setUserRole={setUserRole} setUserName={setUserName} />
       </SignedIn>
       <Footer />
     </BrowserRouter>

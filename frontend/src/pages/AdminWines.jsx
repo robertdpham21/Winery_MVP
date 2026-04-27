@@ -1,6 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import api from '../api'
 import { formatCurrency } from '../utils/formatCurrency'
+import { notifyError, notifySuccess } from '../utils/notify'
+
+const formatWineType = (type) => {
+  if (!type) return ''
+
+  return type
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
 
 const AdminWines = () => {
   const currentYear = new Date().getFullYear()
@@ -11,17 +21,24 @@ const AdminWines = () => {
   })
   const [editing, setEditing] = useState(null)
   const [message, setMessage] = useState('')
+  const [sortBy, setSortBy] = useState('name_asc')
 
-const fetchWines = async () => {
-  try {
-    const response = await api.get('/api/wines?all=true')
-    setWines(response.data)
-  } catch (err) {
-    console.error(err)
-  }
-}
+  const fetchWines = useCallback(async () => {
+    try {
+      const response = await api.get('/api/wines?all=true')
+      setWines(response.data)
+    } catch (err) {
+      console.error(err)
+    }
+  }, [])
 
- useEffect(() => { fetchWines() }, [])
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      fetchWines()
+    }, 0)
+
+    return () => window.clearTimeout(timerId)
+  }, [fetchWines])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -32,20 +49,26 @@ const fetchWines = async () => {
 
     const parsedPrice = Number(form.price)
     if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
-      setMessage('Price must be greater than 0')
+      const message = 'Price must be greater than 0'
+      setMessage(message)
+      notifyError(message)
       return
     }
 
     const parsedStock = Number(form.stock_quantity)
     if (!Number.isInteger(parsedStock) || parsedStock < 0) {
-      setMessage('Stock must be a whole number 0 or greater')
+      const message = 'Stock must be a whole number 0 or greater'
+      setMessage(message)
+      notifyError(message)
       return
     }
 
     if (form.vintage_year !== '') {
       const parsedVintageYear = Number(form.vintage_year)
       if (!Number.isInteger(parsedVintageYear) || parsedVintageYear >= currentYear) {
-        setMessage(`Vintage year must be before ${currentYear}`)
+        const message = `Vintage year must be before ${currentYear}`
+        setMessage(message)
+        notifyError(message)
         return
       }
     }
@@ -54,16 +77,20 @@ const fetchWines = async () => {
       if (editing) {
         await api.put(`/api/wines/${editing}`, form)
         setMessage('Wine updated!')
+        notifySuccess('Wine updated!')
       } else {
         await api.post('/api/wines', form)
         setMessage('Wine created!')
+        notifySuccess('Wine created!')
       }
       setForm({ name: '', wine_type: 'red', description: '', vintage_year: '', price: '', stock_quantity: '', image_url: '' })
       setEditing(null)
       fetchWines()
       setTimeout(() => setMessage(''), 2000)
     } catch (err) {
-      setMessage(err?.response?.data?.error || 'Failed to save wine')
+      const message = err?.response?.data?.error || 'Failed to save wine'
+      setMessage(message)
+      notifyError(message)
     }
   }
 
@@ -89,10 +116,21 @@ const fetchWines = async () => {
     }
   }
 
+  const sortedWines = [...wines].sort((leftWine, rightWine) => {
+    if (sortBy === 'name_asc') return leftWine.name.localeCompare(rightWine.name)
+    if (sortBy === 'name_desc') return rightWine.name.localeCompare(leftWine.name)
+    if (sortBy === 'price_asc') return parseFloat(leftWine.price) - parseFloat(rightWine.price)
+    if (sortBy === 'price_desc') return parseFloat(rightWine.price) - parseFloat(leftWine.price)
+    if (sortBy === 'year_asc') return (leftWine.vintage_year || 0) - (rightWine.vintage_year || 0)
+    if (sortBy === 'year_desc') return (rightWine.vintage_year || 0) - (leftWine.vintage_year || 0)
+    return 0
+  })
+
   return (
     <div>
       <h2>Manage Wines</h2>
       {message && <p className="message-success">{message}</p>}
+
 
       <form onSubmit={handleSubmit}>
         <div>
@@ -133,7 +171,21 @@ const fetchWines = async () => {
         {editing && <button type="button" onClick={() => { setEditing(null); setForm({ name: '', wine_type: 'red', description: '', vintage_year: '', price: '', stock_quantity: '', image_url: '' }) }}>Cancel</button>}
       </form>
 
-      <table>
+      <div className="table-controls">
+        <label>
+          Sort wines
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+            <option value="name_asc">Name (A-Z)</option>
+            <option value="name_desc">Name (Z-A)</option>
+            <option value="price_asc">Price (Low to High)</option>
+            <option value="price_desc">Price (High to Low)</option>
+            <option value="year_desc">Vintage Year (Newest)</option>
+            <option value="year_asc">Vintage Year (Oldest)</option>
+          </select>
+        </label>
+      </div>
+      
+      <table className="manage-wines-table">
         <thead>
           <tr>
             <th>Name</th>
@@ -146,17 +198,20 @@ const fetchWines = async () => {
           </tr>
         </thead>
         <tbody>
-          {wines.map((wine) => (
-            <tr key={wine.wineID} style={{ opacity: wine.is_active ? 1 : 0.5 }}>
+          {sortedWines.map((wine) => (
+            <tr key={wine.wineID}>
               <td>{wine.name}</td>
-              <td>{wine.wine_type}</td>
+              <td>{formatWineType(wine.wine_type)}</td>
               <td>{wine.vintage_year}</td>
               <td>{formatCurrency(wine.price)}</td>
               <td>{wine.stock_quantity}</td>
               <td>{wine.is_active ? 'Yes' : 'No'}</td>
               <td>
                 <button className="btn-small" onClick={() => handleEdit(wine)}>Edit</button>
-                <button className="btn-small" onClick={() => handleToggleActive(wine)}>
+                <button
+                  className={`btn-small ${wine.is_active ? 'btn-deactivate' : 'btn-activate'}`}
+                  onClick={() => handleToggleActive(wine)}
+                >
                   {wine.is_active ? 'Deactivate' : 'Activate'}
                 </button>
               </td>
