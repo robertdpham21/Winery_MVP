@@ -20,6 +20,10 @@ import AccessDenied from './pages/AccessDenied'
 
 import './App.css'
 
+function ProtectedAdminRoute({ component: Component, userRole }) {
+  return userRole === 'admin' ? <Component /> : <AccessDenied />
+}
+
 function AppContent({ userRole, setUserRole, setUserName }) {
   const { getAccessToken } = useAsgardeo()
   const [profileStatus, setProfileStatus] = useState('loading')
@@ -76,9 +80,9 @@ function AppContent({ userRole, setUserRole, setUserName }) {
         <Route path="/profile" element={<Profile />} />
         <Route path="/checkout" element={<Checkout />} />
         
-        <Route path="/admin/wines" element={userRole === 'admin' ? <AdminWines /> : <AccessDenied />} />
-        <Route path="/admin/customers" element={userRole === 'admin' ? <AdminCustomers /> : <AccessDenied />} />
-        <Route path="/admin/orders" element={userRole === 'admin' ? <AdminOrders /> : <AccessDenied />} />
+        <Route path="/admin/wines" element={<ProtectedAdminRoute component={AdminWines} userRole={userRole} />} />
+        <Route path="/admin/customers" element={<ProtectedAdminRoute component={AdminCustomers} userRole={userRole} />} />
+        <Route path="/admin/orders" element={<ProtectedAdminRoute component={AdminOrders} userRole={userRole} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </main>
