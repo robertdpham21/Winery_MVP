@@ -68,16 +68,19 @@
 
 strata-chat {
 	position: fixed !important;
-	bottom: 1.2rem !important;
-	right: 1.2rem !important;
-	z-index: 500 !important;
+	bottom: 2rem !important;
+	right: 1.5rem !important;
+	z-index: 100 !important;
+	top: auto !important;
+	left: auto !important;
 	max-width: 380px !important;
+	pointer-events: auto !important;
 }
 
 .app-notification {
 	position: fixed;
 	right: 1rem;
-	bottom: 1rem;
+	bottom: 5rem;
 	z-index: 1200;
 	min-width: min(92vw, 420px);
 	max-width: 420px;
