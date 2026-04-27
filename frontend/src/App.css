@@ -92,7 +92,7 @@ strata-chat {
 	overflow: hidden !important;
 }
 
-.strata-chat-widget {
+html body .strata-chat-widget {
 	position: fixed !important;
 	right: 1rem !important;
 	bottom: 1rem !important;
@@ -107,7 +107,7 @@ strata-chat {
 	border-radius: 16px !important;
 }
 
-.strata-chat-widget iframe {
+html body .strata-chat-widget iframe {
 	position: static !important;
 	top: auto !important;
 	right: auto !important;
