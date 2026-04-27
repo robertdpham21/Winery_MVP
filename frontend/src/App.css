@@ -92,6 +92,21 @@ strata-chat {
 	overflow: hidden !important;
 }
 
+body > iframe:not([style]) {
+	position: fixed !important;
+	right: 1rem !important;
+	bottom: 1rem !important;
+	top: auto !important;
+	left: auto !important;
+	width: min(360px, calc(100vw - 2rem)) !important;
+	height: min(520px, calc(100vh - 6rem)) !important;
+	max-width: min(360px, calc(100vw - 2rem)) !important;
+	max-height: min(520px, calc(100vh - 6rem)) !important;
+	z-index: 900 !important;
+	overflow: hidden !important;
+	border-radius: 16px !important;
+}
+
 .app-notification {
 	position: fixed;
 	right: 1rem;
