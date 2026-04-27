@@ -27,6 +27,10 @@ h1, h2, h3, h4 {
   font-family: 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
+h2 {
+  margin-bottom: 1rem;
+}
+
 a {
   text-decoration: none;
   color: inherit;

@@ -20,7 +20,7 @@ const AdminCustomers = () => {
 
   return (
     <div>
-      <h2>View Customers</h2>
+      <h2>View Users</h2>
       {error && <p className="message-error">{error}</p>}
       {message && <p className="message-success">{message}</p>}
 

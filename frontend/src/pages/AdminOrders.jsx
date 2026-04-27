@@ -57,6 +57,11 @@ const AdminOrders = () => {
       {message && <p className="message-success">{message}</p>}
       {error && <p className="message-error">{error}</p>}
 
+      <div className="card" style={{ marginBottom: '1.5rem' }}>
+        <p><strong>Total Revenue:</strong> {formatCurrency(orders.reduce((sum, order) => sum + parseFloat(order.total_amount), 0))}</p>
+        <p><strong>Total Orders:</strong> {orders.length}</p>
+      </div>
+
       <div className="order-tabs" role="tablist" aria-label="Admin order filters">
         {ORDER_TABS.map((tab) => (
           <button

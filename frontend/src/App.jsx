@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { SignedIn, SignedOut, useAsgardeo } from '@asgardeo/react'
 import api, { setAuthToken } from './api'
+import { setCartUser } from './cart'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -15,6 +16,7 @@ import AdminCustomers from './pages/AdminCustomers'
 import AdminOrders from './pages/AdminOrders'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
+
 import './App.css'
 
 function AppContent({ userRole, setUserRole }) {
@@ -29,6 +31,7 @@ function AppContent({ userRole, setUserRole }) {
         const response = await api.get('/api/users/me')
         setProfileStatus('complete')
         setUserRole(response.data.role || 'customer')
+        setCartUser(response.data.userID)
       } catch (err) {
         if (err.response && err.response.status === 404) {
           setProfileStatus('incomplete')

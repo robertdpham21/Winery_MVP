@@ -366,8 +366,8 @@ app.put('/api/users/me', verifyToken, async (req, res) => {
     const user = await User.findOne({ where: { asgardeo_sub: req.userId } });
     if (!user) return res.status(404).json({ error: 'Profile not found' });
 
-    const { FirstName, LastName, Email, phone, address } = req.body;
-    await user.update({ FirstName, LastName, Email, phone, address });
+    const { FirstName, LastName, phone, address } = req.body;
+    await user.update({ FirstName, LastName, phone, address });
     res.json(user);
   } catch (err) {
     console.error(err);

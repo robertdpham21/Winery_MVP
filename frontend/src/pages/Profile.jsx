@@ -83,8 +83,8 @@ const Profile = () => {
           </div>
           <div>
             <label>Email:</label>
-            <input type="email" name="Email" value={form.Email} onChange={handleChange} required />
-          </div>
+            <input type="email" value={form.Email} disabled />
+        </div>
           <div>
             <label>Phone:</label>
             <input type="tel" name="phone" value={form.phone} onChange={handleChange} required />

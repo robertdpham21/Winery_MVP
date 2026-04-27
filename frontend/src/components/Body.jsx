@@ -47,6 +47,7 @@ const Body = () => {
       </div>
 
       {error && <p className="message-error">{error}</p>}
+      {message && <p className="message-success">{message}</p>}
 
       <div className="wine-grid">
         {wines.map((wine) => (

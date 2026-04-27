@@ -62,6 +62,7 @@ function CheckoutForm() {
           stripe_payment_id: paymentIntent.id,
         })
         clearCart()
+        localStorage.removeItem('winery_cart')
         navigate('/orders')
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to create order')

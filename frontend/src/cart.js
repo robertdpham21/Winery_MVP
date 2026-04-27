@@ -1,12 +1,20 @@
-const CART_KEY = 'winery_cart'
+const getCartKey = () => {
+  const token = localStorage.getItem('cart_user')
+  return token ? `winery_cart_${token}` : 'winery_cart'
+}
+
+export const setCartUser = (userId) => {
+  localStorage.setItem('cart_user', userId)
+}
 
 export const getCart = () => {
-  const cart = localStorage.getItem(CART_KEY)
+  const cart = localStorage.getItem(getCartKey())
   return cart ? JSON.parse(cart) : []
 }
 
 export const saveCart = (cart) => {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart))
+  localStorage.setItem(getCartKey(), JSON.stringify(cart))
+  window.dispatchEvent(new Event('cart-updated'))
 }
 
 export const addToCart = (wine, quantity = 1) => {
@@ -46,7 +54,9 @@ export const removeFromCart = (wineID) => {
 }
 
 export const clearCart = () => {
-  localStorage.removeItem(CART_KEY)
+  localStorage.removeItem(getCartKey())
+  localStorage.removeItem('winery_cart')
+  window.dispatchEvent(new Event('cart-updated'))
 }
 
 export const getCartTotal = () => {
