@@ -16,6 +16,7 @@ import AdminCustomers from './pages/AdminCustomers'
 import AdminOrders from './pages/AdminOrders'
 import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
+import AccessDenied from './pages/AccessDenied'
 
 import './App.css'
 
@@ -75,13 +76,9 @@ function AppContent({ userRole, setUserRole, setUserName }) {
         <Route path="/profile" element={<Profile />} />
         <Route path="/checkout" element={<Checkout />} />
         
-        {userRole === 'admin' && (
-          <>
-            <Route path="/admin/wines" element={<AdminWines />} />
-            <Route path="/admin/customers" element={<AdminCustomers />} />
-            <Route path="/admin/orders" element={<AdminOrders />} />
-          </>
-        )}
+        <Route path="/admin/wines" element={userRole === 'admin' ? <AdminWines /> : <AccessDenied />} />
+        <Route path="/admin/customers" element={userRole === 'admin' ? <AdminCustomers /> : <AccessDenied />} />
+        <Route path="/admin/orders" element={userRole === 'admin' ? <AdminOrders /> : <AccessDenied />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </main>
