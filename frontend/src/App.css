@@ -102,9 +102,10 @@ html body .strata-chat-widget {
 	height: min(520px, calc(100vh - 6rem)) !important;
 	max-width: min(360px, calc(100vw - 2rem)) !important;
 	max-height: min(520px, calc(100vh - 6rem)) !important;
-	z-index: 900 !important;
+	z-index: 50 !important;
 	overflow: hidden !important;
 	border-radius: 16px !important;
+	pointer-events: none !important;
 }
 
 html body .strata-chat-widget iframe {
@@ -118,6 +119,7 @@ html body .strata-chat-widget iframe {
 	max-width: 100% !important;
 	max-height: 100% !important;
 	z-index: auto !important;
+	pointer-events: auto !important;
 }
 
 .app-notification {
