@@ -66,6 +66,14 @@
 	box-shadow: 0 8px 20px rgba(26, 10, 10, 0.16);
 }
 
+strata-chat {
+	position: fixed !important;
+	bottom: 1.2rem !important;
+	right: 1.2rem !important;
+	z-index: 500 !important;
+	max-width: 380px !important;
+}
+
 .app-notification {
 	position: fixed;
 	right: 1rem;
