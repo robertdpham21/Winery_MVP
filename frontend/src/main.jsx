@@ -9,6 +9,7 @@ createRoot(document.getElementById('root')).render(
     <AsgardeoProvider
       clientId={import.meta.env.VITE_ASGARDEO_CLIENT_ID}
       baseUrl={import.meta.env.VITE_ASGARDEO_BASE_URL}
+      redirectUrl={import.meta.env.VITE_REDIRECT_URL}
       scopes="openid profile email"
     >
       <App />
