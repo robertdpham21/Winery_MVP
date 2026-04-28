@@ -47,7 +47,7 @@ header {
 }
 
 header .header-welcome {
-  color: var(--cabernet);
+  color: white;
   font-family: 'Playfair Display', Georgia, serif;
   font-style: italic;
   font-size: 0.95rem;
