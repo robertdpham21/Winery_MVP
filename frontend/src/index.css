@@ -46,6 +46,13 @@ header {
   border-bottom: 3px solid var(--aged-gold);
 }
 
+header .header-welcome {
+  color: var(--cabernet);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-style: italic;
+  font-size: 0.95rem;
+}
+
 header img {
   height: 70px;
   object-fit: contain;
