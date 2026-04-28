@@ -4,6 +4,8 @@ import { formatCurrency } from '../utils/formatCurrency'
 import { formatOrderStatus } from '../utils/formatOrderStatus'
 import { notifyError } from '../utils/notify'
 
+const TAX_RATE = 0.0825
+
 const ORDER_TABS = [
   { value: 'all', label: 'All Orders' },
   { value: 'pending', label: 'Pending' },
@@ -80,6 +82,9 @@ const Orders = () => {
       ) : (
         filteredOrders.map((order) => {
           const status = formatOrderStatus(order.order_status)
+          const subtotal = order.order_items?.reduce((sum, item) => sum + item.quantity * parseFloat(item.unit_price), 0) || 0
+          const tax = subtotal * TAX_RATE
+          const total = subtotal + tax
 
           return (
             <div key={order.orderID} className="order-card">
@@ -118,7 +123,9 @@ const Orders = () => {
                   ))}
                 </tbody>
               </table>
-              <h4>Total: {formatCurrency(order.total_amount)}</h4>
+              <p>Subtotal: {formatCurrency(subtotal)}</p>
+              <p>Tax ({(TAX_RATE * 100).toFixed(2)}%): {formatCurrency(tax)}</p>
+              <h4>Total: {formatCurrency(total)}</h4>
             </div>
           )
         })
