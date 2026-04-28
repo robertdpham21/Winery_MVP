@@ -46,6 +46,14 @@ header {
   border-bottom: 3px solid var(--aged-gold);
 }
 
+header img {
+  height: 70px;
+  object-fit: contain;
+  background-color: white;
+  padding: 2px 4px;
+  border-radius: 6px;
+}
+
 header h1 {
   color: var(--champagne);
   font-size: 1.8rem;

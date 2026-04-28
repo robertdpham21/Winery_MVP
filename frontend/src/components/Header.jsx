@@ -19,7 +19,9 @@ const Header = ({ userRole, userName }) => {
 
   return (
     <header className="site-header">
-      <h1>Tam & Pham's Winery</h1>
+      <Link to="/">
+  <img src="/TP logo.png" alt="Tam & Pham's Winery" style={{ height: '50px' }} />
+</Link>
       <nav>
         <SignedIn>
           <Link to="/">🏠 Home</Link>
