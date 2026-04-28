@@ -94,6 +94,7 @@ function App() {
   const [userName, setUserName] = useState('')
   const [notification, setNotification] = useState(null)
   const notificationTimerRef = useRef(null)
+  const { isLoading } = useAsgardeo()
 
   useEffect(() => {
     const handleNotification = (event) => {
@@ -121,6 +122,16 @@ function App() {
       }
     }
   }, [])
+
+  if (isLoading) {
+    return (
+      <BrowserRouter>
+        <Header userRole={userRole} userName={userName} />
+        <main><p>Loading...</p></main>
+        <Footer />
+      </BrowserRouter>
+    )
+  }
 
   return (
     <BrowserRouter>
