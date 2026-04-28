@@ -65,7 +65,7 @@
 	z-index: 1000;
 	box-shadow: 0 8px 20px rgba(26, 10, 10, 0.16);
 }
-
+/* 
 #chat-container {
 	position: fixed !important;
 	bottom: 2rem !important;
@@ -120,7 +120,7 @@ html body .strata-chat-widget iframe {
 	max-height: 100% !important;
 	z-index: auto !important;
 	pointer-events: auto !important;
-}
+} */
 
 .app-notification {
 	position: fixed;

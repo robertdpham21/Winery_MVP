@@ -150,6 +150,7 @@ function App() {
       <SignedIn>
         <AppContent userRole={userRole} setUserRole={setUserRole} setUserName={setUserName} />
       </SignedIn>
+      <strata-chat workspace="tamandpham"></strata-chat>
       <Footer />
     </BrowserRouter>
   )
