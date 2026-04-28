@@ -13,6 +13,7 @@ This repository contains a backend API built with Express/Sequelize and a fronte
 ## Environment Variables
 
 Create environment files before running the app.
+- Side note: All environment variables are in the Credentials + .env files document that was submitted in canvas to follow best Github practices.
 
 ### Backend `backend/.env`
 
