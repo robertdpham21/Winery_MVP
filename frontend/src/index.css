@@ -358,6 +358,10 @@ form input:focus, form select:focus, form textarea:focus {
   margin: 1rem 0;
 }
 
+p + a > button {
+  margin-top: 1rem;
+}
+
 /* ---- CHECKOUT ---- */
 .stripe-card {
   border: 2px solid #d4cbb8;
